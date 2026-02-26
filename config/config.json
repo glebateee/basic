@@ -4,5 +4,12 @@
     },
     "main" : {
         "message" : "Hello from the config file"
+    },
+    "files": {
+        "path": "internal/placeholder/files"
+    },
+    "templates": {
+        "path": "internal/placeholder/html/*.html",
+        "reload": true
     }
 }

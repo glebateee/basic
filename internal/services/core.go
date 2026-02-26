@@ -28,19 +28,20 @@ func addService(life lifecycle, factoryFunc interface{}) error {
 
 func resolveServiceFromValue(ctx context.Context, targetPtr reflect.Value) error {
 	targetType := targetPtr.Elem().Type()
+	fmt.Printf("Resolving service for type: %v\n", targetType) // debug
 	if targetType == reflect.TypeOf(context.Context(nil)) {
 		targetPtr.Elem().Set(reflect.ValueOf(ctx))
 		return nil
 	}
 	if binding, found := services[targetType]; found {
+		fmt.Printf("Found binding for %v\n", targetType) // debug
 		if binding.lifecycle == Scoped {
-			resolveScopedService(ctx, targetPtr, binding)
-		} else {
-			targetPtr.Elem().Set(invokeFunction(ctx, binding.factoryFunc)[0])
+			return resolveScopedService(ctx, targetPtr, binding)
 		}
+		targetPtr.Elem().Set(invokeFunction(ctx, binding.factoryFunc)[0])
 		return nil
 	}
-	return fmt.Errorf("Cannot find service %s", targetType.String())
+	return fmt.Errorf("cannot find service %s", targetType.String())
 }
 
 func resolveScopedService(ctx context.Context, target reflect.Value, binding BindingMap) error {

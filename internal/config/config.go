@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"flag"
 	"os"
 	"strings"
 )
@@ -39,6 +40,28 @@ func New(filename string) (Config, error) {
 	}
 	cfg := &DefaultConfig{configData: m}
 	return cfg, nil
+}
+
+func MustLoadConfig() string {
+	configPath := fetchConfigPath()
+	if configPath == "" {
+		panic("config path not set")
+	}
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		panic("config file not found" + configPath)
+	}
+	return configPath
+}
+
+func fetchConfigPath() string {
+	var configPath string
+	flag.StringVar(&configPath, "config", "", "path to config file")
+	flag.Parse()
+
+	if configPath == "" {
+		configPath = os.Getenv("CONFIG_PATH")
+	}
+	return configPath
 }
 
 func (c *DefaultConfig) get(name string) (value interface{}, found bool) {

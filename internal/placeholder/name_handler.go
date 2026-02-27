@@ -17,7 +17,7 @@ func (n NameHandler) GetName(i int) string {
 	if i < len(names) {
 		return fmt.Sprintf("Name #%v: %v", i, names[i])
 	} else {
-		return fmt.Sprintf("Index out of bounds")
+		return "Index out of bounds"
 	}
 }
 func (n NameHandler) GetNames() string {

@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/glebateee/basic/internal/http/actionresults"
 	"github.com/glebateee/basic/internal/http/handling/params"
 	"github.com/glebateee/basic/internal/pipeline"
 	"github.com/glebateee/basic/internal/services"
@@ -64,6 +65,17 @@ func (rc *RouterComponent) invokeHandler(
 	}
 	paramVals = append([]reflect.Value{receiver.Elem()}, paramVals...)
 	result := route.handlerMethod.Func.Call(paramVals)
-	io.WriteString(ctx.ResponseWriter, fmt.Sprint(result[0].Interface()))
+	if len(result) > 0 {
+		if action, ok := result[0].Interface().(actionresults.ActionResult); ok {
+			if err := services.PopulateForContext(ctx.Request.Context(), action); err != nil {
+				return err
+			}
+			return action.Execute(&actionresults.ActionContext{
+				Context:        ctx.Request.Context(),
+				ResponseWriter: ctx.ResponseWriter,
+			})
+		}
+		io.WriteString(ctx.ResponseWriter, fmt.Sprint(result[0].Interface()))
+	}
 	return nil
 }

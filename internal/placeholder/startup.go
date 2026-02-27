@@ -16,7 +16,7 @@ func createPipeline() pipeline.RequestPipeline {
 		&basic.LoggingComponent{},
 		&basic.ErrorComponent{},
 		&basic.StaticFileComponent{},
-		&SimpleMessageComponent{},
+		//&SimpleMessageComponent{},
 		handling.NewRouter(
 			handling.HandlerEntry{
 				Prefix:  "",

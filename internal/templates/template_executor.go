@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"strings"
@@ -29,7 +30,7 @@ func (proc *LayoutTemplateProcessor) ExecTemplate(
 	if err := localTemplates.ExecuteTemplate(&sb, name, data); err != nil {
 		return err
 	}
-	//fmt.Println(sb.String())
+	fmt.Println(sb.String())
 	if layoutName != "" {
 		return localTemplates.ExecuteTemplate(writer, layoutName, data)
 	}
